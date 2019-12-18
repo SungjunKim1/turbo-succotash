@@ -1,4 +1,11 @@
 
+git:
+  submodules: true
+
+notifications:
+  email:
+    - sj.kim@alcherainc.com
+
 language: cpp
 compiler: clang
 
