@@ -1,0 +1,28 @@
+
+language: cpp
+compiler: clang
+
+os: osx
+
+matrix:
+  include:
+    - osx_image: xcode10.3
+      env:
+        - SHARED=true
+
+    - osx_image: xcode11.2
+      env:
+        - SHARED=true
+
+install:
+  - cmake --version
+
+script:
+  - mkdir build
+  - cd build
+  - cmake .. -DBUILD_SHARED_LIBS=${SHARED}
+  - cmake --build .
+
+after_success:
+  - file ./libsocket.a
+  - otool -L ./libsocket.a
