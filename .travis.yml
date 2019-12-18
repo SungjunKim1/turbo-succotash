@@ -22,12 +22,16 @@ matrix:
     - osx_image: xcode10.3
       env:
         - SHARED=true
+        - TARGET=x86_64
 
     - osx_image: xcode11.2
       env:
         - SHARED=true
+        - TARGET=x86_64
 
     - osx_image: xcode11.2
+      env:
+        - TARGET=iPhoneOS
       script:
         - cmake ..
           -DCMAKE_TOOLCHAIN_FILE=../ios-cmake/ios.toolchain.cmake
@@ -46,7 +50,7 @@ before_script:
   - cd build
 
 script:
-  - cmake .. -G Ninja -DBUILD_SHARED_LIBS=${SHARED}
+  - cmake .. -G Ninja -DBUILD_SHARED_LIBS=${SHARED} -DTARGET=${TARGET}
   - cmake --build .
   - cmake --build . --target install
 
@@ -57,8 +61,8 @@ after_success:
 
 before_deploy:
   - cd ${TRAVIS_BUILD_DIR}
-  - export ZIP_NAME="socket_${TARGET_PLATFORM}.zip"
-  - zip -r ${ZIP_NAME} build
+  - export ZIP_NAME="socket_${TRAVIS_OSX_IMAGE}_${TARGET}.zip"
+  - zip -r ${ZIP_NAME} install
 
 deploy:
   - provider: releases
