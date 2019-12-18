@@ -31,10 +31,14 @@ matrix:
       script:
         - cmake ..
           -DCMAKE_TOOLCHAIN_FILE=../ios-cmake/ios.toolchain.cmake
+          -DENABLE_VISIBILITY=true
         - cmake --build .
 
 install:
   - cmake --version
+  - if [ ${TRAVIS_OS_NAME} == "osx" ]; then
+    brew info llvm;
+    fi
 
 before_script:
   - mkdir build
@@ -48,3 +52,17 @@ after_success:
   - tree -L 2 ${TRAVIS_BUILD_DIR}
   # - file ./libsocket.a
   # - otool -L ./libsocket.a
+
+before_deploy:
+  - cd ${TRAVIS_BUILD_DIR}
+  - export ZIP_NAME="socket_${TARGET_PLATFORM}.zip"
+  - zip -r ZIP_NAME build
+
+deploy:
+  - provider: releases
+    api_key: "${MAINTAINER_GITHUB_TOKEN}"
+    file: ${ZIP_NAME}
+    skip_cleanup: true
+    prerelease: true
+    on:
+      tags: true
