@@ -27,6 +27,12 @@ matrix:
       env:
         - SHARED=true
 
+    - osx_image: xcode11.2
+      script:
+        - cmake ..
+          -DCMAKE_TOOLCHAIN_FILE=../ios-cmake/ios.toolchain.cmake
+        - cmake --build .
+
 install:
   - cmake --version
 
@@ -39,6 +45,6 @@ script:
   - cmake --build .
 
 after_success:
-  - tree ${TRAVIS_BUILD_DIR}
+  - tree -L 2 ${TRAVIS_BUILD_DIR}
   # - file ./libsocket.a
   # - otool -L ./libsocket.a
