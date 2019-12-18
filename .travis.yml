@@ -4,6 +4,12 @@ compiler: clang
 
 os: osx
 
+addons:
+  homebrew:
+    packages:
+      - ninja
+      - tree
+
 matrix:
   include:
     - osx_image: xcode10.3
@@ -17,12 +23,15 @@ matrix:
 install:
   - cmake --version
 
-script:
+before_script:
   - mkdir build
   - cd build
-  - cmake .. -DBUILD_SHARED_LIBS=${SHARED}
+
+script:
+  - cmake .. -G Ninja -DBUILD_SHARED_LIBS=${SHARED}
   - cmake --build .
 
 after_success:
-  - file ./libsocket.a
-  - otool -L ./libsocket.a
+  - tree ${TRAVIS_BUILD_DIR}
+  # - file ./libsocket.a
+  # - otool -L ./libsocket.a
