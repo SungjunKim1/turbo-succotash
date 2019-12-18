@@ -33,6 +33,7 @@ matrix:
           -DCMAKE_TOOLCHAIN_FILE=../ios-cmake/ios.toolchain.cmake
           -DENABLE_VISIBILITY=true
         - cmake --build .
+        - cmake --build . --target install
 
 install:
   - cmake --version
@@ -47,6 +48,7 @@ before_script:
 script:
   - cmake .. -G Ninja -DBUILD_SHARED_LIBS=${SHARED}
   - cmake --build .
+  - cmake --build . --target install
 
 after_success:
   - tree -L 2 ${TRAVIS_BUILD_DIR}
@@ -56,7 +58,7 @@ after_success:
 before_deploy:
   - cd ${TRAVIS_BUILD_DIR}
   - export ZIP_NAME="socket_${TARGET_PLATFORM}.zip"
-  - zip -r ZIP_NAME build
+  - zip -r ${ZIP_NAME} build
 
 deploy:
   - provider: releases

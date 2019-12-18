@@ -1,6 +1,7 @@
 
 cmake_minimum_required(VERSION 3.10)
-project(succotash LANGUAGES CXX)
+project(succotash VERSION 1.0
+        LANGUAGES CXX)
 
 add_library(socket
   socket.h
@@ -15,7 +16,8 @@ PROPERTIES
 
 target_include_directories(socket
 PUBLIC
-  ${PROJECT_SOURCE_DIR}
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
+  $<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/include>
 )
 
 if(WIN32)
@@ -52,3 +54,31 @@ elseif(MSVC)
     /W4
   )
 endif()
+
+
+install(FILES   socket.h
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/include
+)
+
+install(TARGETS         socket
+        EXPORT          socket-config
+        RUNTIME   DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
+        LIBRARY   DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
+        ARCHIVE   DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
+        INCLUDES  DESTINATION ${CMAKE_INSTALL_PREFIX}/include
+)
+
+install(EXPORT      socket-config
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/share/socket
+)
+
+include(CMakePackageConfigHelpers)
+set(VERSION_FILE_PATH   ${CMAKE_BINARY_DIR}/cmake/socket-config-version.cmake)
+write_basic_package_version_file(${VERSION_FILE_PATH}
+    VERSION             ${PROJECT_VERSION}
+    COMPATIBILITY       SameMajorVersion
+)
+
+install(FILES           ${VERSION_FILE_PATH} 
+        DESTINATION     ${CMAKE_INSTALL_PREFIX}/share/socket
+)
